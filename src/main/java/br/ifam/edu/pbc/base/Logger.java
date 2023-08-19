@@ -13,11 +13,11 @@ public class Logger implements ILog {
     private String source;
 
     private String fileName;
-    private final String fileExtension = ".log";
+    private static final String fileExtension = ".log";
 
-    private final String fileNameMomentPattern = "yyyy-MM-dd-HH-mm-ss";
+    private static final String fileNameMomentPattern = "yyyy-MM-dd-HH-mm-ss";
 
-    private final String logMomentPattern = "yyyy-MM-dd HH:mm:ss";
+    private static final String logMomentPattern = "yyyy-MM-dd HH:mm:ss";
 
     @Override
     public void setSource(String source) throws LoggerException{
@@ -30,7 +30,7 @@ public class Logger implements ILog {
 
     private void setFileName(){
 //      "validation-19-08-2023-09-49-01.log"
-        String moment = buildMoment(this.fileNameMomentPattern);
+        String moment = buildMoment(fileNameMomentPattern);
         this.fileName = this.source + "-" + moment + fileExtension;
     }
 
@@ -47,7 +47,7 @@ public class Logger implements ILog {
         try(FileWriter fileWriter = new FileWriter(fileName);
             PrintWriter printWriter = new PrintWriter(fileWriter)){
 
-            printWriter.println(buildMoment(this.logMomentPattern));
+            printWriter.println(buildMoment(logMomentPattern));
             printWriter.println(message);
 
         }catch(IOException e){
@@ -57,7 +57,20 @@ public class Logger implements ILog {
     }
 
     @Override
-    public void log(Throwable throwable) {
+    public void log(Throwable throwable) throws LoggerException {
+
+        try(FileWriter fileWriter = new FileWriter(fileName,true);
+            PrintWriter printWriter = new PrintWriter(fileWriter)){
+
+            printWriter.println(buildMoment(logMomentPattern));
+            throwable.printStackTrace(printWriter);
+
+        }catch(IOException e){
+            throw new LoggerException("Problema ao criar o arquivo",e);
+        }
+
+
+
 
     }
 }

@@ -12,6 +12,9 @@ public class TestLogger {
         logger.setSource("validation");
 
         logger.log("testando o log...");
+
+        logger.log(new Exception("Exception 01"));
+
     }
 
 }
